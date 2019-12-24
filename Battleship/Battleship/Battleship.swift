@@ -68,3 +68,23 @@ extension Position {
         sqrt(x * x + y * y)
     }
 }
+
+typealias Region = (Position) -> Bool
+
+// 以原点为圆心的圆
+func circle(radius: Distance) -> Region {
+    return { point in point.length <= radius }
+}
+
+func circle2(radius: Distance, center: Position) -> Region {
+    return { point in point.minus(center).length <= radius }
+}
+
+func shift(region: @escaping Region, offset: Position) -> Region {
+    return { point in region(point.minus(offset)) }
+}
+
+//let temp = circle(radius: 5)
+//let isCircle = temp(Position(x: 3, y: 2))
+// 判断 x: 3 y: 2 的 Position 是否在原点是圆心半径是 5 的圆内
+let isCircle = circle(radius: 5)(Position(x: 3, y: 2))
