@@ -72,11 +72,11 @@ extension Position {
 typealias Region = (Position) -> Bool
 
 // 以原点为圆心的圆
-func circle(radius: Distance) -> Region {
+func circle(_ radius: Distance) -> Region {
     return { point in point.length <= radius }
 }
 
-func circle2(radius: Distance, center: Position) -> Region {
+func circle2(_ radius: Distance, _ center: Position) -> Region {
     return { point in point.minus(center).length <= radius }
 }
 
@@ -84,7 +84,15 @@ func shift(region: @escaping Region, offset: Position) -> Region {
     return { point in region(point.minus(offset)) }
 }
 
+// 表示圆心是 (5, 5) 半径为 10 的圆
+let temp = shift(region: circle(10), offset: Position(x: 5, y: 5))
+
+// 由原区域以外的所有点组成
+func invert(region: @escaping Region) -> Region {
+    return { point in !region(point) }
+}
+
 //let temp = circle(radius: 5)
 //let isCircle = temp(Position(x: 3, y: 2))
 // 判断 x: 3 y: 2 的 Position 是否在原点是圆心半径是 5 的圆内
-let isCircle = circle(radius: 5)(Position(x: 3, y: 2))
+let isCircle = circle(5)(Position(x: 3, y: 2))
