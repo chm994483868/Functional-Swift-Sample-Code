@@ -115,3 +115,15 @@ func union(_ region1: @escaping Region, _ region2: @escaping Region) -> Region {
 func difference(_ region: @escaping Region, _ minus: @escaping Region) -> Region {
     return intersection(region, invert(minus))
 }
+
+extension Ship {
+    func canSafelyEngageShip3(_ target: Ship, _ friend: Ship) -> Bool {
+        let rangeRegion = difference(circle(firingRange), circle(unsafeRange))
+        let firingRegion = shift(region: rangeRegion, offset: position)
+        let friendlyRegion = shift(region: circle(friend.unsafeRange), offset: friend.position)
+        
+        let resultRegion = difference(firingRegion, friendlyRegion)
+        
+        return resultRegion(target.position)
+    }
+}
