@@ -58,10 +58,10 @@
 		8E4C4CA423B41E1E0089E782 /* EncapsulationCoreImage */ = {
 			isa = PBXGroup;
 			children = (
+				8E4C4CB923B41E7A0089E782 /* EncapsulationCoreImage.swift */,
 				8E4C4CA523B41E1E0089E782 /* AppDelegate.swift */,
 				8E4C4CA723B41E1E0089E782 /* SceneDelegate.swift */,
 				8E4C4CA923B41E1E0089E782 /* ViewController.swift */,
-				8E4C4CB923B41E7A0089E782 /* EncapsulationCoreImage.swift */,
 				8E4C4CAB23B41E1E0089E782 /* Main.storyboard */,
 				8E4C4CAE23B41E200089E782 /* Assets.xcassets */,
 				8E4C4CB023B41E200089E782 /* LaunchScreen.storyboard */,

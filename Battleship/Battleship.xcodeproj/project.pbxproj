@@ -58,10 +58,10 @@
 		8E54B53523B17637009D16EB /* Battleship */ = {
 			isa = PBXGroup;
 			children = (
+				8E54B54A23B17739009D16EB /* Battleship.swift */,
 				8E54B53623B17637009D16EB /* AppDelegate.swift */,
 				8E54B53823B17637009D16EB /* SceneDelegate.swift */,
 				8E54B53A23B17637009D16EB /* ViewController.swift */,
-				8E54B54A23B17739009D16EB /* Battleship.swift */,
 				8E54B53C23B17637009D16EB /* Main.storyboard */,
 				8E54B53F23B17639009D16EB /* Assets.xcassets */,
 				8E54B54123B17639009D16EB /* LaunchScreen.storyboard */,
