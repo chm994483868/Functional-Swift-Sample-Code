@@ -56,3 +56,30 @@ func colorOverlay(_ color: UIColor) -> Filter {
         return compositeSourceOver(overly)(image)
     }
 }
+
+func composeFilters(_ filter1: @escaping Filter, _ filter2: @escaping Filter) -> Filter {
+    return { image in return filter2(filter1(image)) }
+}
+
+infix operator >>>
+
+func >>>(_ filter1: @escaping Filter, _ filter2: @escaping Filter) -> Filter {
+    return { image in filter2(filter1(image)) }
+}
+
+func add1(_ x: Int, _ y: Int) -> Int {
+    return x + y
+}
+
+func add2(_ x: Int) -> (Int) -> Int {
+    return { y in
+        return x + y
+    }
+}
+
+let tt = add1(1, 2)
+let tt2 = add2(1)(2)
+
+func add3(_ x: Int) -> (Int) -> Int {
+    return { y in x + y }
+}
