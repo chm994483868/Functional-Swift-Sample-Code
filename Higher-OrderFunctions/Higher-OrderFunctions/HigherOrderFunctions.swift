@@ -209,4 +209,49 @@ extension Array {
     }
 }
 
-// 上传了但是没有展示
+// 实际运用
+struct City {
+    let name: String
+    let population: Int
+}
+
+let paris = City(name: "Paris", population: 2241)
+let madrid = City(name: "Madrid", population: 3165)
+let amsterdam = City(name: "Amsterdam", population: 827)
+let berlin = City(name: "Berlin", population: 3562)
+
+let cites = [paris, madrid, amsterdam, berlin]
+extension City {
+    func cityByScalingPopulation() -> City {
+        return City(name: name, population: population * 1000)
+    }
+    
+    func TT() {
+        
+        _ = cites.filter { $0.population > 1000 }.map { $0.cityByScalingPopulation() }.reduce("City:Population") { (result, c) in
+            return result + "\n" + "\(c.name): \(c.population)"
+        }
+
+    }
+}
+
+func noOP<T>(x: T) -> T {
+    return x
+}
+
+func noOpAny(x: Any) -> Any {
+    return x
+}
+
+func noOpAnyWrong(x: Any) -> Any {
+    return 0
+}
+
+infix operator >>>
+func >>> <A, B, C>(f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
+    return { x in g(f(x)) }
+}
+
+func curry<A, B, C>(f: @escaping (A, B) -> C) -> (A) -> (B) -> C {
+    return { x in { y in f(x, y) } }
+}
