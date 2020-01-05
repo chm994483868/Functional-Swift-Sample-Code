@@ -17,9 +17,9 @@ func minusIsCommutative(_ x: Int, _ y: Int) -> Bool {
     return x - y == y - x
 }
 
-protocol Arbitrary {
-    static func arbitrary() -> Self // 返回的 Self 也就是实现了 Arbitrary 协议的这个类或者结构体的实例
-}
+//protocol Arbitrary {
+//    static func arbitrary() -> Self // 返回的 Self 也就是实现了 Arbitrary 协议的这个类或者结构体的实例
+//}
 
 extension Int: Arbitrary {
     static func arbitrary() -> Int {
@@ -96,5 +96,44 @@ extension CGSize: Arbitrary {
 //    s.hasPrefix("Hello")
 //}
 
+protocol Smaller {
+    func smaller() -> Self?
+}
 
+extension Int: Smaller {
+    func smaller() -> Int? {
+        return self == 0 ? nil : self / 2
+    }
+}
 
+let temporaryInt = 100.smaller()
+
+extension String: Smaller {
+    func smaller() -> String? {
+        return isEmpty ? nil : String(self.dropFirst())
+    }
+}
+
+protocol Arbitrary: Smaller {
+    static func arbitrary() -> Self
+}
+
+func iterateWhile<A>(condition: (A) -> Bool, initial: A, next: (A) -> A?) -> A {
+    if let x = next(initial), condition(x)  {
+        return iterateWhile(condition: condition, initial: x, next: next)
+    }
+    return initial
+}
+
+func check2<A: Arbitrary>(message: String, _ property: (A) -> Bool) {
+    for _ in 0..<numberOfIterations {
+        let value = A.arbitrary()
+        guard property(value) else {
+            let smallerValue = iterateWhile(condition: { !property($0) }, initial: value) { $0.smaller() }
+            print("\"\(message)\" doesn't hold: \(smallerValue)")
+            return
+        }
+    }
+    
+    print("\"\(message)\" passed \(numberOfIterations) tests.")
+}
