@@ -21,15 +21,31 @@ func minusIsCommutative(_ x: Int, _ y: Int) -> Bool {
 //    static func arbitrary() -> Self // 返回的 Self 也就是实现了 Arbitrary 协议的这个类或者结构体的实例
 //}
 
+protocol Smaller {
+    func smaller() -> Self?
+}
+
+protocol Arbitrary: Smaller {
+    static func arbitrary() -> Self
+}
+
 extension Int: Arbitrary {
-    static func arbitrary() -> Int {
+    static func arbitrary() -> Int { // 加 static 表示用遵守协议的类名(或结构体名、枚举名等) 调用协议方法
         return Int(arc4random())
+    }
+    
+    func smaller() -> Int? { // 不加 static 表示用实例对象来调用协议方法
+        return self == 0 ? nil : self / 2
     }
 }
 
 extension CGFloat: Arbitrary {
     static func arbitrary() -> CGFloat {
         return CGFloat(arc4random())
+    }
+    
+    func smaller() -> CGFloat? {
+        return self == 0 ? nil : self / 2
     }
 }
 
@@ -38,6 +54,10 @@ let temporary = Int.arbitrary()
 extension Character: Arbitrary {
     static func arbitrary() -> Character {
         return Character(UnicodeScalar(Int.random(from: 65, to: 90))!) // 大写字母 A-Z 的 ASCII 码
+    }
+    
+    func smaller() -> Character? {
+        return nil
     }
 }
 
@@ -53,7 +73,7 @@ extension Int {
 
 extension String: Arbitrary {
     static func arbitrary() -> String {
-        let randomLength = Int.random(from: 0, to: 40) // 随机生成一个 0 - 40 之间的数字，接着随机生成一个该长度的字符串，字符串的每个字母为 A - Z 之间的随机一个
+        let randomLength = Int.random(from: 0, to: 40) // 随机生成一个 0 - 40 之间的数字，接着以该数字为长度随机生成一个字符串，字符串的每个字母为 A - Z 之间的随机一个
         let randomCharacter = tabulate(times: randomLength) { _ in
             Character.arbitrary()
         }
@@ -86,7 +106,13 @@ extension CGSize: Arbitrary {
     static func arbitrary() -> CGSize {
         return CGSize(width: CGFloat.arbitrary(), height: CGFloat.arbitrary())
     }
+    
+    func smaller() -> CGSize? {
+        return nil
+    }
 }
+
+//check1(message: <#T##String#>, <#T##property: (Arbitrary) -> Bool##(Arbitrary) -> Bool#>)
 
 //check1(message: "Area should be at least 0") { (size: CGSize) in
 //    size.area >= 0
@@ -96,26 +122,12 @@ extension CGSize: Arbitrary {
 //    s.hasPrefix("Hello")
 //}
 
-protocol Smaller {
-    func smaller() -> Self?
-}
-
-extension Int: Smaller {
-    func smaller() -> Int? {
-        return self == 0 ? nil : self / 2
-    }
-}
-
 let temporaryInt = 100.smaller()
 
 extension String: Smaller {
     func smaller() -> String? {
         return isEmpty ? nil : String(self.dropFirst())
     }
-}
-
-protocol Arbitrary: Smaller {
-    static func arbitrary() -> Self
 }
 
 func iterateWhile<A>(condition: (A) -> Bool, initial: A, next: (A) -> A?) -> A {
@@ -136,4 +148,15 @@ func check2<A: Arbitrary>(message: String, _ property: (A) -> Bool) {
     }
     
     print("\"\(message)\" passed \(numberOfIterations) tests.")
+}
+
+func qsort(_ originArray: [Int]) -> [Int] {
+    if originArray.isEmpty { return [] }
+    var array = originArray
+    
+    let pivot = array.remove(at: 0)
+    let lesser = array.filter { $0 < pivot }
+    let greater = array.filter { $0 >= pivot }
+    
+    return qsort(lesser) + [pivot] + qsort(greater)
 }
