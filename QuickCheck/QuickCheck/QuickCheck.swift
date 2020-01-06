@@ -155,8 +155,67 @@ func qsort(_ originArray: [Int]) -> [Int] {
     var array = originArray
     
     let pivot = array.remove(at: 0)
-    let lesser = array.filter { $0 < pivot }
-    let greater = array.filter { $0 >= pivot }
+    let lesser = array.filter { $0 < pivot } // 过滤出所有小于 pivot 的元素
+    let greater = array.filter { $0 >= pivot } // 过滤出所有大于等于 pivot 的元素
     
     return qsort(lesser) + [pivot] + qsort(greater)
+}
+
+//func test() {
+//    check2(message: "Qsort should behave like sort") { (x: [Int]) in
+//        print(qsort(x))
+//        return true
+//    }
+//}
+
+extension Array: Smaller { // Array 遵守 Smaller 协议，实现 smaller() 函数
+    func smaller() -> Array<Element>? {
+        guard !isEmpty else { return nil }
+        return Array(dropFirst())
+    }
+}
+
+extension Array where Element: Arbitrary {
+    static func arbitrary() -> [Element] {
+        let randomLength = Int(arc4random() % 50)
+        return tabulate(times: randomLength) { _ in
+            Element.arbitrary()
+        }
+    }
+}
+
+struct ArbitraryInstance<T> {
+    let arbitrary: () -> T
+    let smaller: (T) -> T?
+}
+
+func checkHelper<A>(arbitraryInstance: ArbitraryInstance<A>, _ property: (A) -> Bool, _ message: String) {
+    for _ in 0..<numberOfIterations {
+        let value = arbitraryInstance.arbitrary()
+        guard property(value) else {
+            let smallerValue = iterateWhile(condition: { !property($0) }, initial: value, next: arbitraryInstance.smaller)
+            print("\"\(message)\" doesn't hold: \(smallerValue)")
+            return
+        }
+    }
+    
+    print("\"\(message)\" passed \(numberOfIterations) tests.")
+}
+
+func check<X: Arbitrary>(message: String, property: (X) -> Bool) {
+    let instance = ArbitraryInstance(arbitrary: X.arbitrary, smaller: { $0.smaller() })
+    checkHelper(arbitraryInstance: instance, property, message)
+}
+
+func check<X: Arbitrary>(message: String, _ property: ([X]) -> Bool) {
+    let instance = ArbitraryInstance(arbitrary: Array.arbitrary, smaller: { (x: [X]) in
+        x.smaller()
+    })
+    checkHelper(arbitraryInstance: instance, property, message)
+}
+
+func test2() {
+    check(message: "Qsort should behave like sort") { (x: [Int]) in
+        return qsort(x) == x.sorted(by: <)
+    }
 }
