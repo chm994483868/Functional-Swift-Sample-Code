@@ -8,35 +8,36 @@
 
 import Foundation
 
-//var x: Int = 1
-//let y: Int = 2
-//
-//struct PointStruct {
-//    var x: Int
-//    var y: Int
-//}
-//
-////var structPoint = PointStruct(x: 1, y: 2)
-////var sameStructPoint = structPoint //
-////sameStructPoint.x = 3
-//
-//class PointClass {
-//    var x: Int
-//    var y: Int
-//    
-//    init(x: Int, y: Int) {
-//        self.x = x
-//        self.y = y
-//    }
-//}
-//
-////var classPoint = PointClass(x:1, y: 2)
-////var sameClassPoint = classPoint
-////sameClassPoint.x = 3
-//
-//func setStructToOrigin(point: inout PointStruct) -> PointStruct {
-//    point.x = 0
-//    point.y = 0
-//    
-//    return point
-//}
+var x: Int = 1
+let y: Int = 2
+
+struct PointStruct {
+    var x: Int
+    var y: Int
+}
+
+class PointClass {
+    var x: Int
+    var y: Int
+    
+    init(x: Int, y: Int) {
+        self.x = x
+        self.y = y
+    }
+}
+
+func setStructToOrigin(point: inout PointStruct) -> PointStruct {
+    point.x = 0
+    point.y = 0
+    
+    return point
+}
+
+func sum(xs: [Int]) -> Int {
+    var result = 0
+    for x in xs {
+        result += x
+    }
+    
+    return result
+}

@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:PurelyFunctionalDataStructures/PurelyFunctionalDataStructures.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Enumeration/Enumeration.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Immutability/Immutability.xcodeproj">
    </FileRef>
    <FileRef
