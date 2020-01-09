@@ -135,4 +135,30 @@ extension BinarySearchTree {
 //let myTree: BinarySearchTree<Int> = BinarySearchTree()
 //var copid = myTree
 //copid.insert(x: 5)
-//(myTree.elements, copid.elements)
+//(myTree.elements, copid.elements) // ([], [5])
+
+func autocomplete(history: [String], textEntered: String) -> [String] {
+    return history.filter { $0.hasPrefix(textEntered) }
+}
+
+struct Trie<Element: Hashable> {
+    let isElement: Bool
+    let children: [Element: Trie<Element>]
+}
+
+extension Trie {
+    init() {
+        isElement = false
+        children = [:]
+    }
+}
+
+extension Trie {
+    var elements: [[Element]] {
+        var result: [[Element]] = isElement ? [[]]: []
+        for (key, value) in children {
+            result += value.elements.map { [key] + $0 }
+        }
+        return result
+    }
+}
