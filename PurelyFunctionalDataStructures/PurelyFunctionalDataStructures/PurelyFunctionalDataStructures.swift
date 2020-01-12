@@ -153,12 +153,18 @@ extension Trie {
     }
 }
 
-//extension Trie {
-//    var elements: [[Element]] {
-//        var result: [[Element]] = isElement ? [[]]: []
-//        for (key, value) in children {
-//            result += value.elements.map { [key] + $0 }
-//        }
-//        return result
-//    }
-//}
+extension Trie {
+    var elements: [[Element]] {
+        var result: [[Element]] = isElement ? [[]]: []
+        for (key, value) in children {
+            result += value.elements.map { [key] + $0 }
+        }
+        return result
+    }
+}
+
+extension Array {
+    var decompose: (Element, [Element])? {
+        return (isEmpty ? nil : (self[startIndex], Array(self.dropFirst())))
+    }
+}
