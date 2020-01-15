@@ -213,14 +213,37 @@ extension Trie {
         }
     }
     
-    func insert(key: [Element]) -> Trie<Element> {
-        guard let (head, tail) = key.decompose else { return Trie(isElement: true, children: children) }
-        var newChildren = children
-        if let nextTrie = children[head] {
-            newChildren[head] = nextTrie.insert(key: tail)
-        } else {
-            newChildren = Trie(tail)
-        }
-        return Trie(isElement: isElement, children: newChildren)
-    }
+//    func insert(key: [Element]) -> Trie<Element> {
+//        guard let (head, tail) = key.decompose else { return Trie(isElement: true, children: children) }
+//        var newChildren = children
+//        if let nextTrie = children[head] {
+//            newChildren[head] = nextTrie.insert(key: tail)
+//        } else {
+//            newChildren = Trie(tail)
+//        }
+//        return Trie(isElement: isElement, children: newChildren)
+//    }
+
+//    func buildStringTrie(words: [String]) -> Trie<Character> {
+//        let emptyTrie = Trie<Character>()
+//        return words.reduce(emptyTrie) { trie, word in
+//            trie.insert(Array(word.characters))
+//        }
+//    }
+    
+//    func autocompleteString(knownWords: Trie<Character>, word: String) -> [String] {
+//        let chars = Array(word.characters)
+//        let completed = knownWords.autocomplete(key: chars)
+//        return completed.map { chars in
+//            word + String(chars)
+//        }
+//    }
 }
+
+//let contents = ["cat", "car", "cart", "dog"]
+//let trieOfWords = buildStringTrie(contents)
+//autocompleteString(trieOfWrods, word: "car")
+//
+//func insert<Seq: CollectionType where Seq.Generator.Element == Element>(key: Seq) -> Trie<Element>
+
+
