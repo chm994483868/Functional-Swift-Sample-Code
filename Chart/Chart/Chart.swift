@@ -173,3 +173,72 @@ extension CGRectEdge {
     }
 }
 
+class Draw: UIView {
+    let diagram: Diagram
+    
+    init(frame: CGRect, diagram: Diagram) {
+        self.diagram = diagram
+        super.init(frame: frame)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("NSCoding not supported")
+    }
+    
+    override func draw(_ rect: CGRect) {
+        guard let context = UIGraphicsGetCurrentContext() else { return }
+        context.draw(bounds: self.bounds, diagram)
+    }
+}
+
+//extension Diagram {
+//    func pdf(width: CGFloat) -> NSData {
+//        let height = width * (size.height / size.width)
+//        let v = Draw(frame: CGRect(x: 0, y: 0, width: width, height: height), diagram: self)
+//        return v.dataWithPDFInsideRect(v.bounds)
+//    }
+//}
+
+func rect(width: CGFloat, height: CGFloat) -> Diagram {
+    return .Prim(CGSize(width: width, height: height), .Rectangle)
+}
+
+func circle(diameter: CGFloat) -> Diagram {
+    return .Prim(CGSize(width: diameter, height: diameter), .Ellipse)
+}
+
+func text(theText: String, width: CGFloat, height: CGFloat) -> Diagram {
+    return .Prim(CGSize(width: width, height: height), .Text(theText))
+}
+
+func square(side: CGFloat) -> Diagram {
+    return rect(width: side, height: side)
+}
+
+//infix operator ||| { associativity left }
+//func ---(l: Diagram, r: Diagram) -> Diagram {
+//    return Diagram.Below(l, r)
+//}
+
+extension Diagram {
+    func fill(color: CGColor) -> Diagram {
+        return .Attributed(.FillColor(color), self)
+    }
+    
+    func alignTop() -> Diagram {
+        return .Align(CGVector(dx: 0.5, dy: 1), self)
+    }
+    
+    func alignBottom() -> Diagram {
+        return .Align(CGVector(dx: 0.5, dy: 0), self)
+    }
+}
+
+//let empty: Diagram = rect(width: 0, height: 0)
+//
+//func hcat(diagrams: [Diagram]) -> Diagram {
+//    return diagrams.reduce(empty, combine:|||)
+//}
+
+// 领域特定语言(domain-specific language 简称 DSL)
+
