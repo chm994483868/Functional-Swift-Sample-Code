@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:GeneratorsAndSequences/GeneratorsAndSequences.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:Chart/Chart.xcodeproj">
    </FileRef>
    <FileRef
