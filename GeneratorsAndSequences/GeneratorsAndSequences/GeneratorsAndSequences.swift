@@ -19,6 +19,7 @@ protocol GeneratorType {
 
 class CountdownGenerator: GeneratorType {
     typealias Element = Int
+    
     var element: Int
     
     init<T>(array: [T]) {
@@ -37,7 +38,7 @@ class CountdownGenerator: GeneratorType {
     }
 }
 
-//let xs = ["A", "B", "C"]
+let xs = ["A", "B", "C"]
 //let generator = CountdownGenerator(array: xs)
 //while let i = generator.next() {
 //    print("Element \(i) of the array is \(xs[i])")
@@ -140,6 +141,9 @@ class LimitGenerator<G: GeneratorType>: GeneratorType {
 protocol SequenceType {
     associatedtype Generator: GeneratorType
     func generate() -> Generator
+    
+//    func map<T>(transform: (Self.Generator.Element) throws -> T) rethrows -> [T]
+//    func filter(includeElement: (Self.Generator.Element) throws -> Bool) rethrows -> [Self.Generator.Element]
 }
 
 struct ReverseSequence<T>: SequenceType {
@@ -149,7 +153,27 @@ struct ReverseSequence<T>: SequenceType {
         self.array = array
     }
     
-    func generate() -> some GeneratorType {
-        <#code#>
+    func generate() -> CountdownGenerator {
+        return CountdownGenerator(array: array)
     }
+}
+
+let reverseSequence = ReverseSequence(array: xs)
+let reverseGenerator = reverseSequence.generate()
+
+//while let i = reverseGenerator.next() {
+//    print("Index \(i) is \(xs[i])")
+//}
+
+//for i in ReverseSequence(array: xs) {
+//    print("Index \(i) is \(xs[i])")
+//}
+
+//extension SequenceType {
+//    public var lazy: LazySequence<Self> { get }
+//}
+
+indirect enum BinarySearchTree<Element: Comparable> {
+    case Leaf
+    case Node(BinarySearchTree<Element>, Element, BinarySearchTree<Element>)
 }
