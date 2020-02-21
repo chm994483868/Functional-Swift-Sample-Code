@@ -8,10 +8,12 @@
 
 import Foundation
 
+//let xs = [1, 2, 3]
 //for x in xs {
 //    // do something with x
 //}
 
+// 一个生成器是每次根据请求生成数组新元素的 “过程” 。一个生成器可以是遵守以下协议的任何类型
 protocol GeneratorType {
     associatedtype Element
     func next() -> Element?
@@ -23,29 +25,25 @@ class CountdownGenerator: GeneratorType {
     var element: Int
     
     init<T>(array: [T]) {
-        self.element = array.count - 1
+        element = array.count - 1
     }
     
     func next() -> Int? {
-        let temporaryValue = element
-        if temporaryValue < 0 {
-            return nil
-        } else {
-            element = element - 1
-        }
+        let result = element < 0 ? nil : element
+        element = element - 1
         
-        return temporaryValue
+        return result
     }
 }
 
-let xs = ["A", "B", "C"]
-//let generator = CountdownGenerator(array: xs)
-//while let i = generator.next() {
-//    print("Element \(i) of the array is \(xs[i])")
-//}
-
-// 生成器却封装了数组序列值的计算。如果你想要用另外一种方式排序序列值，我们只需要更新生成器，而不必再修改这里的代码。
-// 某些情况下，生成器并不需要生成 nil 值。
+func TEST_CountdownGenerator() {
+    let xs = ["A", "B", "C"]
+    
+    let generator = CountdownGenerator(array: xs)
+    while let i = generator.next() {
+        print("Element \(i) of the array is \(xs[i])")
+    }
+}
 
 class PowerGenerator: GeneratorType {
     typealias Element = NSDecimalNumber
@@ -66,114 +64,35 @@ extension PowerGenerator {
                 return x
             }
         }
+        
         return 0
     }
 }
 
-//PowerGenerator().findPower { $0.intValue > 1000 }
+func TEST_PowerGenerator() {
+    var result = PowerGenerator().findPower { (decimalNumber) -> Bool in
+        return decimalNumber.intValue > 1000
+    }
+    
+    result = PowerGenerator().findPower(predicate: { $0.intValue > 1000 })
+    
+    print(result)
+}
 
 class FileLinesGenerator: GeneratorType {
     typealias Element = String
     
     var lines: [String] = []
     
-    init(filename: String) throws {
-        let contents: String = try String(contentsOfFile: filename)
-        
+    init(fileName: String) throws {
+        let contents: String = try String(contentsOfFile: fileName)
         let newLine = NSCharacterSet.newlines
         lines = contents.components(separatedBy: newLine)
     }
     
     func next() -> String? {
         guard !lines.isEmpty else { return nil }
-        let nextLine = lines.remove(at: 0) // 每次删除并返回第一行字符串
+        let nextLine = lines.remove(at: 0)
         return nextLine
     }
-}
-
-extension GeneratorType {
-    mutating func find(predicate: (Element) -> Bool) -> Element? {
-        while let x = self.next() {
-            if predicate(x) {
-                return x
-            }
-        }
-        
-        return nil
-    }
-}
-
-class LimitGenerator<G: GeneratorType>: GeneratorType {
-    typealias Element = G.Element
-    
-    var limit = 0
-    var generator: G
-    
-    init(limit: Int, generator: G) {
-        self.limit = limit
-        self.generator = generator
-    }
-    
-    func next() -> G.Element? {
-        guard limit >= 0 else { return nil }
-        limit = limit - 1
-        return generator.next()
-    }
-}
-
-//class AnyGenerator<Element>: GeneratorType, Sequence {
-//    init(next: () -> Element?) {
-//
-//    }
-//}
-
-//extension Int {
-//    func countDown() -> AnyGenerator<Int> {
-//        var i = self
-//        return anyGenerator { i < 0 ? nil : i-- }
-//    }
-//}
-
-//func +<G: GeneratorType, H:GeneratorType>(first: inout G, second: inout H) -> AnyGenerator<G.Element> where G.Element == H.Element {
-//    return anyGenerator { first.next() ?? second.next() }
-//}
-
-protocol SequenceType {
-    associatedtype Generator: GeneratorType
-    func generate() -> Generator
-    
-//    func map<T>(transform: (Self.Generator.Element) throws -> T) rethrows -> [T]
-//    func filter(includeElement: (Self.Generator.Element) throws -> Bool) rethrows -> [Self.Generator.Element]
-}
-
-struct ReverseSequence<T>: SequenceType {
-    var array: [T]
-    
-    init(array: [T]) {
-        self.array = array
-    }
-    
-    func generate() -> CountdownGenerator {
-        return CountdownGenerator(array: array)
-    }
-}
-
-let reverseSequence = ReverseSequence(array: xs)
-let reverseGenerator = reverseSequence.generate()
-
-//while let i = reverseGenerator.next() {
-//    print("Index \(i) is \(xs[i])")
-//}
-
-//for i in ReverseSequence(array: xs) {
-//    print("Index \(i) is \(xs[i])")
-//}
-
-//extension SequenceType {
-//    public var lazy: LazySequence<Self> { get }
-//}
-
-indirect enum BinarySearchTree<Element: Comparable> {
-    case Leaf
-    case Node(BinarySearchTree<Element>, Element, BinarySearchTree<Element>)
 }
