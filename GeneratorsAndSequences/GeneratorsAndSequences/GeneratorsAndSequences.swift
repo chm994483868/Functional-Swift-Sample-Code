@@ -19,6 +19,18 @@ protocol GeneratorType {
     func next() -> Element?
 }
 
+extension GeneratorType {
+    mutating func find(predicate: (Element) -> Bool) -> Element? {
+        while let x = self.next() {
+            if predicate(x) {
+                return x
+            }
+        }
+        
+        return nil
+    }
+}
+
 class CountdownGenerator: GeneratorType {
     typealias Element = Int
     
@@ -96,3 +108,58 @@ class FileLinesGenerator: GeneratorType {
         return nextLine
     }
 }
+
+class LimitGenerator<G: GeneratorType>: GeneratorType {
+    var limit = 0
+    var generator: G
+    
+    init(limit: Int, generator: G) {
+        self.limit = limit
+        self.generator = generator
+    }
+    
+    func next() -> G.Element? {
+        guard limit >= 0 else { return nil }
+        limit = limit - 1
+        return generator.next()
+    }
+}
+
+//extension Int {
+//    func countDown() -> AnyGenerator<Int> {
+//        var i = self
+//        return anyGenerator { i < 0 ? nil : i-- }
+//    }
+//}
+
+//func +<G: GeneratorType, H: GeneratorType>( first: inout G, second: inout H) -> AnyGenerator<G.Element> where G.Element == H.Element {
+//    return anyGenerator { first.next() ?? second.next()}
+//}
+
+protocol SequenceType {
+    associatedtype Generator: GeneratorType
+    func generate() -> Generator
+}
+
+struct ReverseSequence<T>: SequenceType {
+    var array: [T]
+    
+    init(array: [T]) {
+        self.array = array
+    }
+    
+    func generate() -> CountdownGenerator {
+        return CountdownGenerator(array: array)
+    }
+}
+
+func TEST_ReverseSequence() {
+    let xs = [1, 2, 3]
+    let reverseSequence = ReverseSequence(array: xs)
+    let reverseGenerator = reverseSequence.generate()
+    while let i = reverseGenerator.next() {
+        print("Index \(i) is \(xs[i])")
+    }
+}
+
+
