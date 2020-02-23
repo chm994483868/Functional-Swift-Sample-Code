@@ -139,9 +139,36 @@ class LimitGenerator<G: GeneratorType>: GeneratorType {
 protocol SequenceType {
     associatedtype Generator: GeneratorType
     func generate() -> Generator
+    
+    func map<T>(transform: (Self.Generator.Element) throws -> T) rethrows -> [T]
+    func filter(includeElement: (Self.Generator.Element) throws -> Bool) rethrows -> [Self.Generator.Element]
 }
 
 struct ReverseSequence<T>: SequenceType {
+    func map<T>(transform: (Int) throws -> T) rethrows -> [T] {
+        let generator = self.generate()
+        var arr = [T]()
+        while let i = generator.next() {
+            let temp = try? transform(i)
+            if temp != nil {
+                arr.append(temp!)
+            }
+        }
+        return arr
+    }
+    
+    func filter(includeElement: (Int) throws -> Bool) rethrows -> [Int] {
+        let generator = self.generate()
+        var arr = [Int]()
+        while let i = generator.next() {
+            let temp = try? includeElement(i)
+            if temp != nil {
+                arr.append(i)
+            }
+        }
+        return arr
+    }
+    
     var array: [T]
     
     init(array: [T]) {
@@ -160,6 +187,22 @@ func TEST_ReverseSequence() {
     while let i = reverseGenerator.next() {
         print("Index \(i) is \(xs[i])")
     }
+    
+    _ = ReverseSequence(array: xs).map { xs[$0] }
 }
 
+extension SequenceType {
+//    public func map<T>(@noescape transform: (Self.Generator.Element) throws -> T) rethrows -> [T]
+//    public func filter(@noescape includeElement: (Self.Generator.Element) throws -> Bool) rethrows -> [Self.Generator.Element]
+}
 
+//// 10.5 不止是 Map 与 Filter
+//struct AnySequence<Element>: SequenceType {
+//    init<G: GeneratorType>(_ makeUnderlyingGenerator: () -> G) where G.Element == Element {
+//        //
+//    }
+//    
+//    func generate() -> AnyGenerator<Element> {
+//        //
+//    }
+//}
