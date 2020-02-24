@@ -196,12 +196,12 @@ extension SequenceType {
 //    public func filter(@noescape includeElement: (Self.Generator.Element) throws -> Bool) rethrows -> [Self.Generator.Element]
 }
 
-//// 10.5 不止是 Map 与 Filter
+// 10.5 不止是 Map 与 Filter
 //struct AnySequence<Element>: SequenceType {
 //    init<G: GeneratorType>(_ makeUnderlyingGenerator: () -> G) where G.Element == Element {
 //        //
 //    }
-//    
+//
 //    func generate() -> AnyGenerator<Element> {
 //        //
 //    }
