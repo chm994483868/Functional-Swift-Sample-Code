@@ -7,3 +7,16 @@
 //
 
 import Foundation
+
+struct Parser<Token, Result> {
+    let p: ArraySlice<Token> -> AnySequence<(Result, ArraySlice<Token>)>
+    
+    func parserA() -> Parser<Character, Character> {
+        
+    }
+    
+    func one<A>(x: A) -> AnySequence<A> {
+        return AnySequence(GeneratorOfOne(x))
+    }
+}
+    
