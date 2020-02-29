@@ -43,7 +43,6 @@ struct Parser<Token, Result> {
         }
     }
 }
-    
 
 func testParser<A>(parser: Parser<Character, A>, _ input: String) -> String {
     var result: [String] = []
@@ -51,4 +50,30 @@ func testParser<A>(parser: Parser<Character, A>, _ input: String) -> String {
         result += ["Success, found \(x), remainder: \(Array(s))"]
     }
     return result.isEmpty ? "Parsing failed." : result.joined(separator: "\n")
+}
+
+func parseCharacter(character: Character) -> Parser<Character, Character> {
+    return Parser { x in
+        guard let (head, tail) = x.decompose where head == character else {
+            return none()
+        }
+         
+        return one((character, tail))
+    }
+}
+
+//testParser(parser: parseCharacter(character: "t"), "test")
+
+func satisfy<Token>(condation: (Token) -> Bool) -> Parser<Token, Token> {
+    return Parser { x in
+        guard let (head, tail) = x.decompose where codition(head) else {
+            return none()
+        }
+        
+        return one((head, tail))
+    }
+}
+
+func token<Token: Equatable> (t: Token) -> Parser<Token, Token> {
+    return satisfy { $0 == t }
 }
