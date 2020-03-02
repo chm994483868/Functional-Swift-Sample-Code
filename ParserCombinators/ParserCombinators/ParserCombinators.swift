@@ -77,3 +77,20 @@ func satisfy<Token>(condation: (Token) -> Bool) -> Parser<Token, Token> {
 func token<Token: Equatable> (t: Token) -> Parser<Token, Token> {
     return satisfy { $0 == t }
 }
+
+infix operator <|> { associativity right precedence 130 }
+func <|><Token, A>(l: Parser<Token, A>, r: Parser<Token, A>) -> Parser<Token, A> {
+    return Parser { l.p($0) + r.p($0) }
+}
+
+
+func TEST_<|>() {
+    let a: Character = "a"
+    let b: Character = "b"
+    
+    testParser(parser: token(t: a) <|> token(t: b), "bcd")
+}
+
+func sequence<Token, A, B>(l: Parser<Token, A>, _ r: Parser<Token, B>) -> Parser<Token, (A, B)> {
+    //
+}
